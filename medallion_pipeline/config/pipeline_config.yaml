@@ -11,8 +11,8 @@ project:
 # MongoDB Atlas
 # ─────────────────────────────────────────────
 mongodb:
-  uri: "mongodb+srv://vivekbamauli:Bamauli%418171@cluster.umrslzr.mongodb.net/?appName=Cluster"
-  database: "sample_mflix"
+  uri: "mongodb_url"
+  database: "DB"
   auth_source: "admin"
   read_preference: "secondaryPreferred"
   connect_timeout_ms: 30000

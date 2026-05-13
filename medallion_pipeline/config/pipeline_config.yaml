@@ -1,0 +1,123 @@
+###############################################################
+# Medallion Pipeline - Master Configuration
+###############################################################
+
+project:
+  name: medallion_data_pipeline
+  version: "1.0.0"
+  environment: development   # development | staging | production
+
+# ─────────────────────────────────────────────
+# MongoDB Atlas
+# ─────────────────────────────────────────────
+mongodb:
+  uri: "mongodb+srv://vivekbamauli:Bamauli%418171@cluster.umrslzr.mongodb.net/?appName=Cluster"
+  database: "sample_mflix"
+  auth_source: "admin"
+  read_preference: "secondaryPreferred"
+  connect_timeout_ms: 30000
+  server_selection_timeout_ms: 30000
+
+# ─────────────────────────────────────────────
+# PostgreSQL Metadata Store
+# ─────────────────────────────────────────────
+postgresql:
+  host: "localhost"
+  port: 5432
+  database: "pipeline_metadata"
+  username: "pipeline_user"
+  password: "pipeline_pass"
+  schema: "public"
+  pool_size: 5
+  max_overflow: 10
+
+# ─────────────────────────────────────────────
+# Hadoop HDFS
+# ─────────────────────────────────────────────
+hdfs:
+  namenode_host: "localhost"
+  namenode_port: 9000
+  base_path: "/data-lake"
+  bronze_path: "/data-lake/bronze"
+  silver_path: "/data-lake/silver"
+  gold_path: "/data-lake/gold"
+  replication_factor: 3
+  block_size_mb: 128
+
+# ─────────────────────────────────────────────
+# Apache Spark
+# ─────────────────────────────────────────────
+spark:
+  master: "yarn"                # local[*] | yarn | spark://host:7077
+  app_name: "MedallionPipeline"
+  executor_memory: "4g"
+  driver_memory: "2g"
+  executor_cores: 2
+  num_executors: 4
+  shuffle_partitions: 200
+  mongodb_connector_version: "10.3.0"
+  packages:
+    - "org.mongodb.spark:mongo-spark-connector_2.12:10.3.0"
+    - "org.apache.spark:spark-avro_2.12:3.5.0"
+
+# ─────────────────────────────────────────────
+# Apache Airflow
+# ─────────────────────────────────────────────
+airflow:
+  dag_schedule: "0 2 * * *"    # Daily at 02:00 UTC
+  retries: 3
+  retry_delay_minutes: 5
+  email_alerts: true
+  alert_emails:
+    - "data-engineering@company.com"
+  catchup: false
+  max_active_runs: 1
+  concurrency: 4
+
+# ─────────────────────────────────────────────
+# Hive
+# ─────────────────────────────────────────────
+hive:
+  metastore_uri: "thrift://localhost:9083"
+  database: "medallion"
+  warehouse_dir: "/user/hive/warehouse"
+
+# ─────────────────────────────────────────────
+# Logging
+# ─────────────────────────────────────────────
+logging:
+  level: "INFO"
+  log_dir: "/var/log/medallion_pipeline"
+  max_bytes: 10485760       # 10 MB
+  backup_count: 5
+  format: "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+
+# ─────────────────────────────────────────────
+# Collections (bootstrapped — managed via DB)
+# ─────────────────────────────────────────────
+collections:
+  - name: customers
+    watermark_column: updated_at
+    scd_type: 2
+    primary_key: customer_id
+    active: true
+  - name: orders
+    watermark_column: updated_at
+    scd_type: 1
+    primary_key: order_id
+    active: true
+  - name: products
+    watermark_column: updated_at
+    scd_type: 2
+    primary_key: product_id
+    active: true
+  - name: payments
+    watermark_column: created_at
+    scd_type: 1
+    primary_key: payment_id
+    active: true
+  - name: reviews
+    watermark_column: created_at
+    scd_type: 1
+    primary_key: review_id
+    active: true

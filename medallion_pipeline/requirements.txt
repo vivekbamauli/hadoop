@@ -1,0 +1,39 @@
+# ───────────────────────────────────────────────
+# Medallion Pipeline – Python Dependencies
+# Python 3.10+
+# ───────────────────────────────────────────────
+
+# ── Orchestration ────────────────────────────
+apache-airflow==2.9.2
+apache-airflow-providers-postgres==5.11.0
+apache-airflow-providers-apache-spark==4.9.0
+apache-airflow-providers-mongo==4.2.1
+
+# ── Spark ────────────────────────────────────
+pyspark==3.5.1
+
+# ── MongoDB ──────────────────────────────────
+pymongo[srv]==4.7.3
+dnspython==2.6.1         # required for mongodb+srv:// URIs
+
+# ── PostgreSQL ───────────────────────────────
+psycopg2-binary==2.9.9
+
+# ── Configuration ────────────────────────────
+pyyaml==6.0.1
+python-dotenv==1.0.1
+
+# ── Data / Testing ───────────────────────────
+faker==25.3.0
+pandas==2.2.2
+pyarrow==16.1.0
+
+# ── Utilities ────────────────────────────────
+tenacity==8.4.1          # retry logic
+structlog==24.2.0        # structured logging
+click==8.1.7
+
+# ── Testing ──────────────────────────────────
+pytest==8.2.2
+pytest-cov==5.0.0
+pytest-mock==3.14.0
